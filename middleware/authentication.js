@@ -1,4 +1,11 @@
 const jwt = require('jsonwebtoken')
+/** Middleware: Authenticate user.
+ *
+ * If a token was provided, verify it, and, if valid, store the token payload
+ * on res.locals (this will include the username and isAdmin field.)
+ *
+ * It's not an error if no token was provided or if the token is not valid.
+ */
 
 function authenticateToken(req, res, next){
     const authHeader = req.headers['authorization'];
@@ -13,4 +20,6 @@ function authenticateToken(req, res, next){
     
 }
 
+
 module.exports = {authenticateToken};
+

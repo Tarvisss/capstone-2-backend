@@ -9,10 +9,16 @@ const prisma = new PrismaClient();
 exports.registerUser = async (req, res, next) => {
     try {
         const { username, password, first_name, last_name, email } = req.body;
+
+        const existingUser = await prisma.users.findUnique({ where: { username }});
+        if(existingUser){
+            return res.status(400).json({error: "Username taken!"})
+        }
+
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        const newUser = await prisma.users.create({
+        const user = await prisma.users.create({
             data: { 
                 username, 
                 password: hashedPassword, 
@@ -20,10 +26,10 @@ exports.registerUser = async (req, res, next) => {
                 last_name, 
                 email },
         });
-        const token = jwt.sign(newUser, process.env.SECRET_KEY)
+        const token = jwt.sign({userId: user.id}, process.env.SECRET_KEY)
         // here we create a safeUser that doesn't contain the password
         // Use "_" as a placeholder so that the json response will not have the password
-        const { password:_, ...safeUser } = newUser
+        const { password:_, ...safeUser } = user
         //make sure to wrap both safeUser and token in {},
         //otherwise only on argument will be returned. 
         res.status(201).json({safeUser, token});
@@ -50,10 +56,11 @@ exports.loginUser = async (req, res, next) => {
           if (!isValid) {
             return res.status(400).json({ error: "Invalid username or password" });
           }
+          const token = jwt.sign({user: user.id}, process.env.SECRET_KEY)
           // here we create a safeUser that doesn't contain the password
           // Use "_" as a placeholder so that the json response will not have the password
           const { password:_, ...safeUser} = user;
-        res.json(safeUser);
+        res.json({safeUser, token});
     } catch (error) {
         next(error); 
     }
