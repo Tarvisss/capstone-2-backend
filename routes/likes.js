@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const likesController = require("../controllers/likesController")
+const {authenticateToken} = require("../middleware/authentication");
+const likesController = require("../controllers/likesController");
 
 // Like a challenge
-router.post("/:commentId", likesController.addLikeToComment );
+router.post("/:commentId", authenticateToken, likesController.addLikeToComment );
 
 //remove like
-router.delete("/:commentId", likesController.removeLike);
+router.delete("/:commentId", authenticateToken, likesController.removeLike);
 
 module.exports = router;

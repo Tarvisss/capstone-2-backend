@@ -1,0 +1,25 @@
+### get users
+
+GET http://localhost:3000/users
+
+### resister user
+
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "tsadsiddvdart",
+  "first_name": "Trasddvdsidssds",
+  "last_name": "Sousdddstdhssers",
+  "email": "emaild22ddd4s@esxample.com",
+  "password": "123d1ddd23s123"
+}
+
+### login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "username": "sivartsivart",
+  "password": "123123123"
+}
